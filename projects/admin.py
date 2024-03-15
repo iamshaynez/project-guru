@@ -2,8 +2,9 @@
 from django.contrib import admin
 from django import forms
 from .models import Project, Staff, WorkRecord
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
 
 class ProjectResource(resources.ModelResource):
     class Meta:
@@ -21,49 +22,49 @@ class StaffAdmin(ImportExportModelAdmin):
     list_display = ('name', 'supplier', 'onboard_date', 'rank', 'hourly_rate', 'comment')
     resource_class = StaffResource
 
+
+class StaffForeignKeyWidget(ForeignKeyWidget):
+    def clean(self, value, row=None, *args, **kwargs):
+        print(f'clean staff key: {value}')
+        return self.model.objects.get_or_create(name=value)[0]
+
+class ProjectForeignKeyWidget(ForeignKeyWidget):
+    def clean(self, value, row=None, *args, **kwargs):
+        print(f'clean project key: {value}')
+        return self.model.objects.get_or_create(project_number=value)[0]
+
+
 class WorkRecordResource(resources.ModelResource):
-    staff__name = resources.Field(attribute='staff__name')
-    project__name = resources.Field(attribute='project__name')
+    staff = fields.Field(
+        column_name='staff',
+        attribute='staff',
+        widget=StaffForeignKeyWidget(Staff, 'name')
+    )
+
+    project = fields.Field(
+        column_name='project',
+        attribute='project',
+        widget=ProjectForeignKeyWidget(Project, 'project_number')
+    )
 
     class Meta:
         model = WorkRecord
-        fields = ('id', 'staff__name', 'date', 'hours', 'project__name', 'comment')
-        export_order = ('id', 'staff__name', 'date', 'hours', 'project__name', 'comment')
-
-    def dehydrate_staff__name(self, obj):
-        return obj.staff.name
-
-    def dehydrate_project__name(self, obj):
-        return obj.project.name
-
-class WorkRecordForm(forms.ModelForm):
-    project = forms.ModelChoiceField(queryset=Project.objects.all(), to_field_name="name")
-    staff = forms.ModelChoiceField(queryset=Staff.objects.all(), to_field_name="name")
-
-    class Meta:
-        model = WorkRecord
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['project'].label_from_instance = self.label_from_instance
-        self.fields['staff'].label_from_instance = self.label_from_instance
-
-    def label_from_instance(self, obj):
-        return str(obj)
+        skip_unchanged = True
+        fields = ('id', 'staff', 'date', 'hours', 'project', 'comment')
+        export_order = ('id', 'staff', 'date', 'hours', 'project', 'comment')
 
 class WorkRecordAdmin(ImportExportModelAdmin):
-    list_display = ('staff_name', 'date', 'hours', 'project_name', 'comment')
+    list_display = ('staff_name', 'date', 'hours', 'project_number', 'comment')
 
     def staff_name(self, obj):
         return obj.staff.name
 
-    def project_name(self, obj):
-        return obj.project.name
+    def project_number(self, obj):
+        return obj.project.project_number
     
     staff_name.short_description = 'Staff Name'
-    project_name.short_description = 'Project Name'
-    form = WorkRecordForm
+    project_number.short_description = 'Project Number'
+
     resource_class = WorkRecordResource
 
 admin.site.register(Project, ProjectAdmin)

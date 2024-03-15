@@ -54,6 +54,11 @@ tbody tr:hover {
                 <th>Project Name</th>
                 <th>Budget Used</th>
                 <th>Budget Remaining</th>
+                <th>Budget Total</th>
+                <th>Budget Percetage</th>
+                <th>Hours Booked</th>
+                <th>Budget Man-Month</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -63,6 +68,10 @@ tbody tr:hover {
                 <td>{{ data.project.name }}</td>
                 <td>{{ data.budget_used }}</td>
                 <td>{{ data.budget_remaining }}</td>
+                <td>{{ data.budget_total }}</td>
+                <td>{{ data.budget_percentage }}</td>
+                <td>{{ data.hours_used }}</td>
+                <td>{{ data.budget_man_months }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -27,7 +27,7 @@ def project_budget_view(request):
 
         # 初始化已使用预算为0
         budget_used = 0
-
+        hours_used = 0
         for record in work_records:
             # 获取相关员工的小时费率
             staff = record.staff
@@ -38,15 +38,22 @@ def project_budget_view(request):
 
             # 累加到已使用预算
             budget_used += record_cost
+            hours_used += record.hours
 
         # 计算剩余预算
         budget_remaining = project.budget_amount - budget_used
+        percentage = (budget_used / project.budget_amount) * 100
+        percentage_str = "{:.2f}%".format(percentage)
 
         # 将数据添加到项目数据列表
         project_data.append({
             'project': project,
             'budget_used': budget_used,
-            'budget_remaining': budget_remaining
+            'budget_remaining': budget_remaining,
+            'budget_total': project.budget_amount,
+            'budget_percentage': percentage_str,
+            'budget_man_months': project.budget_man_months,
+            'hours_used': hours_used,
         })
 
     context = {
