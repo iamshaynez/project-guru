@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Budget Overview</title>
+</head>
+<body>
+    <h1>Project Budget Overview</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Project Number</th>
+                <th>Project Name</th>
+                <th>Budget Used</th>
+                <th>Budget Remaining</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in project_data %}
+            <tr>
+                <td>{{ data.project.project_number }}</td>
+                <td>{{ data.project.name }}</td>
+                <td>{{ data.budget_used }}</td>
+                <td>{{ data.budget_remaining }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
