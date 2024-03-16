@@ -19,7 +19,7 @@ class StaffResource(resources.ModelResource):
         model = Staff
 
 class StaffAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'supplier', 'onboard_date', 'rank', 'hourly_rate', 'comment')
+    list_display = ('name', 'name_cn', 'vendor','onboard_date', 'rank', 'hourly_rate', 'comment')
     resource_class = StaffResource
 
 
