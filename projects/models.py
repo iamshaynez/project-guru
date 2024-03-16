@@ -8,17 +8,18 @@ class Project(models.Model):
     budget_amount = models.DecimalField(max_digits=12, decimal_places=2)
     comment = models.TextField(null=True, blank=True)
     def __str__(self):
-        return self.name
+        return self.project_number + ' - ' + self.name
 
 class Staff(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    supplier = models.CharField(max_length=100)
+    name_cn = models.CharField(max_length=100)
+    vendor = models.CharField(max_length=100)
     onboard_date = models.DateField()
     rank = models.CharField(max_length=50)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
     comment = models.TextField(null=True, blank=True)
     def __str__(self):
-        return self.name
+        return self.name + ' - ' + self.name_cn 
 
 class WorkRecord(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
@@ -29,5 +30,5 @@ class WorkRecord(models.Model):
     comment = models.TextField(null=True, blank=True)
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['staff', 'date'], name='unique_work_record')
+            models.UniqueConstraint(fields=['staff', 'date', 'project'], name='unique_work_record')
         ]
