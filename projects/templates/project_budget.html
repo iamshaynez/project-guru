@@ -71,11 +71,27 @@ tbody tr:hover {
                 <td>{{ data.budget_total }}</td>
                 <td>{{ data.budget_percentage }}</td>
                 <td>{{ data.hours_used }}</td>
+
                 <td>{{ data.budget_man_months }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="/admin">Maintain Project Data</a><br>
+    <a id="monthlyLink" href="#">Monthly Summary Report</a>
+
     </center>
+    <script>
+        // Get the current year and month
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+    
+        // Construct the URL
+        const url = `/monthly-summary/${currentYear}/${currentMonth}`;
+    
+        // Set the href attribute of the link
+        document.getElementById('monthlyLink').href = url;
+    </script>
 </body>
 </html>

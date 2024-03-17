@@ -1,21 +1,38 @@
 from django.shortcuts import render
 from .models import Project, WorkRecord, Staff
 
-from django.db.models import Sum
+from django.db.models import Sum, F
 from .models import Project, WorkRecord, Staff
+from datetime import datetime
 
+def monthly_summary(request, year, month):
+    # 转换年和月为日期范围
+    start_date = datetime(year=int(year), month=int(month), day=1)
+    if month == '12':
+        end_date = datetime(year=int(year)+1, month=1, day=1)
+    else:
+        end_date = datetime(year=int(year), month=int(month)+1, day=1)
 
-def project_list(request):
-    projects = Project.objects.all()
-    return render(request, 'project_list.html', {'projects': projects})
+    # 查询在指定日期范围内的工作记录
+    work_records = WorkRecord.objects.filter(date__range=(start_date, end_date))
 
-def staff_list(request):
-    staff_members = Staff.objects.all()
-    return render(request, 'staff_list.html', {'staff_members': staff_members})
+    # 汇总统计数据
+    summary = work_records.values('project__name').annotate(
+        total_hours=Sum('hours'),
+        total_cost=Sum(F('hours') * F('staff__hourly_rate'))
+    ).order_by('project__name')
+    
+    # 获取明细
+    details = work_records.select_related('staff', 'project').order_by('date', 'project')
 
-def workrecord_list(request):
-    work_records = WorkRecord.objects.all()
-    return render(request, 'workrecord_list.html', {'work_records': work_records})
+    context = {
+        'summary': summary,
+        'details': details,
+        'year': year,
+        'month': month
+    }
+
+    return render(request, 'monthly_summary.html', context)
 
 def project_budget_view(request):
     projects = Project.objects.all()
@@ -44,7 +61,7 @@ def project_budget_view(request):
         budget_remaining = project.budget_amount - budget_used
         percentage = (budget_used / project.budget_amount) * 100
         percentage_str = "{:.2f}%".format(percentage)
-
+        
         # 将数据添加到项目数据列表
         project_data.append({
             'project': project,

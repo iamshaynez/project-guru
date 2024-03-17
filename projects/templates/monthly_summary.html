@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Summary</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+        *, *:before, *:after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          background: #105469;
+          font-family: 'Open Sans', sans-serif;
+        }
+        table {
+          background: #012B39;
+          border-radius: 0.25em;
+          border-collapse: collapse;
+          margin: 1em;
+        }
+        th {
+          border-bottom: 1px solid #364043;
+          color: #E2B842;
+          font-size: 0.85em;
+          font-weight: 600;
+          padding: 0.5em 1em;
+          text-align: left;
+        }
+        td {
+          color: #fff;
+          font-weight: 400;
+          padding: 0.65em 1em;
+        }
+        .disabled td {
+          color: #4F5F64;
+        }
+        tbody tr {
+          transition: background 0.25s ease;
+        }
+        tbody tr:hover {
+          background: #014055;
+        }
+            </style>
+</head>
+<body>
+    <h1>Monthly Summary for {{ year }}-{{ month }}</h1>
+    
+    <h2>Summary</h2>
+    <table border="1">
+        <tr>
+            <th>Project Name</th>
+            <th>Total Hours</th>
+            <th>Total Cost</th>
+        </tr>
+        {% for item in summary %}
+        <tr>
+            <td>{{ item.project__name }}</td>
+            <td>{{ item.total_hours }}</td>
+            <td>${{ item.total_cost }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h2>Details</h2>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Staff Name</th>
+            <th>Project Name</th>
+            <th>Hours</th>
+            <th>Hourly Rate</th>
+        </tr>
+        {% for record in details %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.staff.name }}</td>
+            <td>{{ record.project.name }}</td>
+            <td>{{ record.hours }}</td>
+            <td>${{ record.staff.hourly_rate }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
