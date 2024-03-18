@@ -1,5 +1,6 @@
 # Register your models here.
-from django.contrib import admin
+from django.contrib import admin 
+from rangefilter.filters import DateRangeFilter
 from django import forms
 from .models import Project, Staff, WorkRecord
 from import_export import resources, fields
@@ -11,7 +12,8 @@ class ProjectResource(resources.ModelResource):
         model = Project
 
 class ProjectAdmin(ImportExportModelAdmin):
-    list_display = ('project_number', 'name', 'budget_man_months', 'budget_amount', 'comment')
+    list_display = ('project_number', 'name', 'budget_man_months', 'budget_amount', 'active', 'comment')
+    list_filter = ('active','name')
     resource_class = ProjectResource
 
 class StaffResource(resources.ModelResource):
@@ -19,7 +21,8 @@ class StaffResource(resources.ModelResource):
         model = Staff
 
 class StaffAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'name_cn', 'vendor','onboard_date', 'rank', 'hourly_rate', 'comment')
+    list_display = ('name', 'name_cn', 'vendor','onboard_date', 'rank', 'hourly_rate', 'active', 'comment')
+    list_filter = ('vendor', 'rank', ('onboard_date', DateRangeFilter), 'active')
     resource_class = StaffResource
 
 
@@ -55,6 +58,7 @@ class WorkRecordResource(resources.ModelResource):
 
 class WorkRecordAdmin(ImportExportModelAdmin):
     list_display = ('staff_name', 'date', 'hours', 'project_number', 'comment')
+    list_filter = ('staff', ('date', DateRangeFilter), 'project')  # 你希望能够筛选的字段
 
     def staff_name(self, obj):
         return obj.staff.name

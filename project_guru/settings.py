@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     "projects",
     'import_export',
+    'rangefilter',
 ]
 
 MIDDLEWARE = [
