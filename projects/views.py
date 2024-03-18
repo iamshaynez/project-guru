@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Project, WorkRecord, Staff
-
+from django.http import JsonResponse
 from django.db.models import Sum, F
 from .models import Project, WorkRecord, Staff
 from datetime import datetime
@@ -21,12 +21,19 @@ def monthly_summary(request, year, month):
         total_hours=Sum('hours'),
         total_cost=Sum(F('hours') * F('staff__hourly_rate'))
     ).order_by('project__name')
+
+    # 汇总统计数据
+    summary_vendor = work_records.values('staff__vendor').annotate(
+        total_hours=Sum('hours'),
+        total_cost=Sum(F('hours') * F('staff__hourly_rate'))
+    ).order_by('staff__vendor')
     
     # 获取明细
     details = work_records.select_related('staff', 'project').order_by('date', 'project')
 
     context = {
         'summary': summary,
+        'summary_vendor': summary_vendor,
         'details': details,
         'year': year,
         'month': month
@@ -61,7 +68,7 @@ def project_budget_view(request):
         budget_remaining = project.budget_amount - budget_used
         percentage = (budget_used / project.budget_amount) * 100
         percentage_str = "{:.2f}%".format(percentage)
-        
+
         # 将数据添加到项目数据列表
         project_data.append({
             'project': project,
@@ -73,8 +80,40 @@ def project_budget_view(request):
             'hours_used': hours_used,
         })
 
+    # Calculate the total cost of work for each project
+    project_costs = WorkRecord.objects.annotate(
+        total_cost=F('hours') * F('staff__hourly_rate')
+    ).values('project').annotate(total_project_cost=Sum('total_cost')).order_by()
+
+    # Create a dictionary with project id and their total costs
+    project_costs_dict = {item['project']: item['total_project_cost'] for item in project_costs}
+
+    # Calculate the remaining budget for each project and sum them up
+    remaining_budget = sum(
+        project.budget_amount - project_costs_dict.get(project.pk, 0)
+        for project in Project.objects.all()
+    )
+
+    # Calculate the sum of all staff's hourly rate
+    total_hourly_rate = Staff.objects.aggregate(sum_hourly_rate=Sum('hourly_rate'))['sum_hourly_rate']
+    total_daily_rate = total_hourly_rate * 8
+    total_monthly_rate = total_daily_rate * 22
+
+    # Check if we have any staff and if the total hourly rate is not zero to avoid division by zero
+    if total_hourly_rate is None or total_hourly_rate == 0:
+        return JsonResponse({'error': 'No staff available or hourly rate sum is zero'}, status=400)
+    # Divide the remaining budget by the sum of hourly rates to get the total available man hours
+    available_man_hours = remaining_budget / total_hourly_rate
+
     context = {
-        'project_data': project_data
+        'project_data': project_data,
+        'remaining_budget': remaining_budget,
+        'total_hourly_rate': total_hourly_rate,
+        'total_daily_rate': total_daily_rate,
+        'total_monthly_rate': total_monthly_rate,
+        'available_man_hours': available_man_hours,
+        'available_man_months': available_man_hours / 22 / 8,
+        'available_man_days': available_man_hours / 8
     }
 
     return render(request, 'project_budget.html', context)

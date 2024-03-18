@@ -46,9 +46,10 @@
             </style>
 </head>
 <body>
+    <center>
     <h1>Monthly Summary for {{ year }}-{{ month }}</h1>
     
-    <h2>Summary</h2>
+    <h2>Summary By Project</h2>
     <table border="1">
         <tr>
             <th>Project Name</th>
@@ -64,6 +65,21 @@
         {% endfor %}
     </table>
     
+    <h2>Summary By Vendor</h2>
+    <table border="1">
+        <tr>
+            <th>Vendor Name</th>
+            <th>Total Hours</th>
+            <th>Total Cost</th>
+        </tr>
+        {% for item in summary_vendor %}
+        <tr>
+            <td>{{ item.staff__vendor }}</td>
+            <td>{{ item.total_hours }}</td>
+            <td>{{ item.total_cost }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     <h2>Details</h2>
     <table border="1">
         <tr>
@@ -83,5 +99,6 @@
         </tr>
         {% endfor %}
     </table>
+    </center>
 </body>
 </html>

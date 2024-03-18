@@ -77,6 +77,32 @@ tbody tr:hover {
             {% endfor %}
         </tbody>
     </table>
+
+    <h2>Overall forcast</h2>
+    <table border="1">
+        <tr>
+            <th>Total Remaining Budget</th>
+            <th>Total Hourly Cost</th>
+            <th>Total Daily Cost</th>
+            <th>Total Monthly Cost</th>
+            <th>Available Man Hours</th>
+            <th>Available Man Days</th>
+            <th>Available Man Months</th>
+        </tr>
+
+        <tr>
+            <td>{{ remaining_budget }}</td>
+            <td>{{ total_hourly_rate }}</td>
+            <td>{{ total_daily_rate }}</td>
+            <td>{{ total_monthly_rate }}</td>
+            <td>{{ available_man_hours }}</td>
+            <td>{{ available_man_days }}</td>
+            <td>{{ available_man_months }}</td>
+
+        </tr>
+
+    </table>
+
     <a href="/admin">Maintain Project Data</a><br>
     <a id="monthlyLink" href="#">Monthly Summary Report</a>
 
