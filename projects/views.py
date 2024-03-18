@@ -112,8 +112,8 @@ def project_budget_view(request):
         'total_daily_rate': total_daily_rate,
         'total_monthly_rate': total_monthly_rate,
         'available_man_hours': available_man_hours,
-        'available_man_months': available_man_hours / 22 / 8,
-        'available_man_days': available_man_hours / 8
+        'available_man_months': "{:.2f}%".format(available_man_hours / 22 / 8),
+        'available_man_days': "{:.2f}%".format(available_man_hours / 8)
     }
 
     return render(request, 'project_budget.html', context)
