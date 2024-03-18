@@ -21,7 +21,7 @@ class Staff(models.Model):
     active = models.BooleanField(default=True)
     comment = models.TextField(null=True, blank=True)
     def __str__(self):
-        return self.name + ' - ' + self.name_cn 
+        return self.name + ' - ' + self.name_cn + ' - ' + self.vendor + ' - ' + self.rank
 
 class WorkRecord(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
