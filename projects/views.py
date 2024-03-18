@@ -42,7 +42,7 @@ def monthly_summary(request, year, month):
     return render(request, 'monthly_summary.html', context)
 
 def project_budget_view(request):
-    projects = Project.objects.all()
+    projects = Project.objects.filter(active=True)
     project_data = []
 
     for project in projects:
@@ -91,11 +91,11 @@ def project_budget_view(request):
     # Calculate the remaining budget for each project and sum them up
     remaining_budget = sum(
         project.budget_amount - project_costs_dict.get(project.pk, 0)
-        for project in Project.objects.all()
+        for project in Project.objects.filter(active=True)
     )
 
     # Calculate the sum of all staff's hourly rate
-    total_hourly_rate = Staff.objects.aggregate(sum_hourly_rate=Sum('hourly_rate'))['sum_hourly_rate']
+    total_hourly_rate = Staff.objects.filter(active=True).aggregate(sum_hourly_rate=Sum('hourly_rate'))['sum_hourly_rate']
     total_daily_rate = total_hourly_rate * 8
     total_monthly_rate = total_daily_rate * 22
 
