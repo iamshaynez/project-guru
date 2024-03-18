@@ -59,7 +59,7 @@
         <tr>
             <td>{{ item.project__name }}</td>
             <td>{{ item.total_hours }}</td>
-            <td>${{ item.total_cost }}</td>
+            <td>{{ item.total_cost }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -79,7 +79,7 @@
             <td>{{ record.staff.name }}</td>
             <td>{{ record.project.name }}</td>
             <td>{{ record.hours }}</td>
-            <td>${{ record.staff.hourly_rate }}</td>
+            <td>{{ record.staff.hourly_rate }}</td>
         </tr>
         {% endfor %}
     </table>
