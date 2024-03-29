@@ -57,17 +57,25 @@ class WorkRecordResource(resources.ModelResource):
         export_order = ('id', 'staff', 'date', 'hours', 'project', 'comment')
 
 class WorkRecordAdmin(ImportExportModelAdmin):
-    list_display = ('staff_name', 'date', 'hours', 'project_number', 'comment')
+    list_display = ('staff_name', 'staff_name_cn','date', 'hours', 'project_number', 'project_name', 'comment')
     list_filter = ('staff', ('date', DateRangeFilter), 'project')  # 你希望能够筛选的字段
 
     def staff_name(self, obj):
         return obj.staff.name
+    
+    def staff_name_cn(self, obj):
+        return obj.staff.name_cn
 
     def project_number(self, obj):
         return obj.project.project_number
     
+    def project_name(self, obj):
+        return obj.project.name
+    
     staff_name.short_description = 'Staff Name'
     project_number.short_description = 'Project Number'
+    staff_name_cn.short_description = 'Staff Chinese Name'
+    project_name.short_description = 'Project Name'
 
     resource_class = WorkRecordResource
 
