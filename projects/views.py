@@ -117,3 +117,30 @@ def project_budget_view(request):
     }
 
     return render(request, 'project_budget.html', context)
+
+def monthly_report(request, year, month):
+    # Create the start and end dates for the month
+    start_date = datetime(year, month, 1)
+    # Handle month wrapping
+    if month == 12:
+        end_date = datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime(year, month + 1, 1)
+
+    # Aggregate work records for the specified month
+    work_records = WorkRecord.objects.filter(
+        date__gte=start_date,
+        date__lt=end_date
+    ).values(
+        'staff__name', 'staff__name_cn', 'project__project_number', 'project__name'
+    ).annotate(
+        total_hours=Sum('hours')
+    ).order_by('staff__name', 'project__project_number')
+
+    # Render the response
+    context = {
+        'work_records': work_records,
+        'year': year,
+        'month': month,
+    }
+    return render(request, 'monthly_report.html', context)

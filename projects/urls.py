@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.project_budget_view, name='project_budget'),
     path('project_budget/', views.project_budget_view, name='project_budget'),
     path('monthly-summary/<int:year>/<int:month>/', views.monthly_summary, name='monthly_summary'),
+    path('monthly-report/<int:year>/<int:month>/', views.monthly_report, name='monthly_report'),
 ]

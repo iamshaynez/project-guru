@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Report</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+        *, *:before, *:after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          background: #105469;
+          font-family: 'Open Sans', sans-serif;
+        }
+        table {
+          background: #012B39;
+          border-radius: 0.25em;
+          border-collapse: collapse;
+          margin: 1em;
+        }
+        th {
+          border-bottom: 1px solid #364043;
+          color: #E2B842;
+          font-size: 0.85em;
+          font-weight: 600;
+          padding: 0.5em 1em;
+          text-align: left;
+        }
+        td {
+          color: #fff;
+          font-weight: 400;
+          padding: 0.65em 1em;
+        }
+        .disabled td {
+          color: #4F5F64;
+        }
+        tbody tr {
+          transition: background 0.25s ease;
+        }
+        tbody tr:hover {
+          background: #014055;
+        }
+            </style>
+</head>
+<body>
+    <center>
+        <h2>Work Records Report for {{ year }}-{{ month }}</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Staff Chinese Name</th>
+                    <th>Project Number</th>
+                    <th>Project Name</th>
+                    <th>Total Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in work_records %}
+                <tr>
+                    <td>{{ record.staff__name }}</td>
+                    <td>{{ record.staff__name_cn }}</td>
+                    <td>{{ record.project__project_number }}</td>
+                    <td>{{ record.project__name }}</td>
+                    <td>{{ record.total_hours }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No records found for this period.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </center>
+</body>
+</html>
